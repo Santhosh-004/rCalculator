@@ -1,1 +1,1 @@
-/home/santhosh/projects/calculator/target/debug/projects: /home/santhosh/projects/calculator/src/main.rs
+/home/santhosh/projects/rCalculator/target/debug/projects: /home/santhosh/projects/rCalculator/src/main.rs
