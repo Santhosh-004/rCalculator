@@ -53,8 +53,8 @@ fn main() {
 }
 
 fn perform_operation(num1: &str, num2: &str, operator: char) -> Result<f32, String> {
-    let left_num: f32 = num1.parse().map_err(|_| "Invalid number".to_string())?;
-    let right_num: f32 = num2.parse().map_err(|_| "Invalid number".to_string())?;
+    let left_num: f32 = parse_number(num1)?;
+    let right_num: f32 = parse_number(num2)?;
 
     match operator {
         '+' => Ok(left_num + right_num),
@@ -69,4 +69,8 @@ fn perform_operation(num1: &str, num2: &str, operator: char) -> Result<f32, Stri
         }
         _ => Err(format!("Unknown operator: {}", operator)),
     }
+}
+
+fn parse_number(s: &str) -> Result<f32, String> {
+    s.parse().map_err(|_| "Invalid number".to_string())
 }
