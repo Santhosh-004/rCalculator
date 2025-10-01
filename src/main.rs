@@ -27,60 +27,52 @@ fn main() {
     }
 
     let mut it = 0;
-    let mut stack_size = stack.len()-1;
+    let mut stack_size = stack.len() - 1;
     loop {
-        let operation = symbols.chars().nth(it).unwrap().to_string();
+        let operation = symbols.chars().nth(it).unwrap();
         let mut i = 0;
         while i <= stack_size {
-            let mut operation_performed = false;
-            if stack[i] == operation {
-                if operation == "/" {
-                    let number1: i32 = stack[i-1].parse().unwrap();
-                    let number2: i32 = stack[i+1].parse().unwrap();
-                    if number2 == 0 {
-                        println!("division by 0 happened, exiting");
+            if stack[i] == operation.to_string() {
+                match perform_operation(&stack[i - 1], &stack[i + 1], &operation) {
+                    Ok(result) => {
+                        stack[i - 1] = result.to_string();
+                        stack.remove(i);
+                        stack.remove(i);
+                        stack_size -= 2;
+                        i -= 1;
+                    }
+                    Err(error) => {
+                        println!("Error: {}", error);
                         exit(1);
                     }
-                    let temp = number1/number2;
-                    stack[i-1] = temp.to_string();
-                    operation_performed = true;
-                
-                } else if operation == "*" {
-                    let number1: i32 = stack[i-1].parse().unwrap();
-                    let number2: i32 = stack[i+1].parse().unwrap();
-                    let temp = number1*number2;
-                    stack[i-1] = temp.to_string();
-                    operation_performed = true;
-                
-                } else if operation == "+" {
-                    let number1: i32 = stack[i-1].parse().unwrap();
-                    let number2: i32 = stack[i+1].parse().unwrap();
-                    let temp = number1+number2;
-                    stack[i-1] = temp.to_string();
-                    operation_performed = true;
-                
-                } else if operation == "-" {
-                    let number1: i32 = stack[i-1].parse().unwrap();
-                    let number2: i32 = stack[i+1].parse().unwrap();
-                    let temp = number1-number2;
-                    stack[i-1] = temp.to_string();
-                    operation_performed = true;
-                }
-                if operation_performed {
-                    stack.remove(i);
-                    stack.remove(i);
-                    stack_size -= 2;
-                    i -= 1;
                 }
             }
             i += 1;
         }
-        it+=1;
+        it += 1;
         if it == 4 {
             break;
         }
     }
 
     println!("The calculated value is: {}", stack[0]);
-    
+}
+
+fn perform_operation(num1: &str, num2: &str, operator: &char) -> Result<f32, String> {
+    let left_num: f32 = num1.parse().map_err(|_| "Invalid number".to_string())?;
+    let right_num: f32 = num2.parse().map_err(|_| "Invalid number".to_string())?;
+
+    match operator {
+        '+' => Ok(left_num + right_num),
+        '-' => Ok(left_num - right_num),
+        '*' => Ok(left_num * right_num),
+        '/' => {
+            if right_num == 0.0 {
+                Err("Division by zero".to_string())
+            } else {
+                Ok(left_num / right_num)
+            }
+        }
+        _ => Err(format!("Unknown operator: {}", operator)),
+    }
 }
