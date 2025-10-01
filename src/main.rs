@@ -26,14 +26,12 @@ fn main() {
         stack.push(small_stack);
     }
 
-    let mut it = 0;
     let mut stack_size = stack.len() - 1;
-    loop {
-        let operation = symbols.chars().nth(it).unwrap();
+    for operation in symbols.chars() {
         let mut i = 0;
         while i <= stack_size {
             if stack[i] == operation.to_string() {
-                match perform_operation(&stack[i - 1], &stack[i + 1], &operation) {
+                match perform_operation(&stack[i - 1], &stack[i + 1], operation) {
                     Ok(result) => {
                         stack[i - 1] = result.to_string();
                         stack.remove(i);
@@ -49,16 +47,12 @@ fn main() {
             }
             i += 1;
         }
-        it += 1;
-        if it == 4 {
-            break;
-        }
     }
 
     println!("The calculated value is: {}", stack[0]);
 }
 
-fn perform_operation(num1: &str, num2: &str, operator: &char) -> Result<f32, String> {
+fn perform_operation(num1: &str, num2: &str, operator: char) -> Result<f32, String> {
     let left_num: f32 = num1.parse().map_err(|_| "Invalid number".to_string())?;
     let right_num: f32 = num2.parse().map_err(|_| "Invalid number".to_string())?;
 
